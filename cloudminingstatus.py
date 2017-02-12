@@ -14,6 +14,7 @@
 @todo:    Make it into webservice?
  
 '''
+from __future__ import print_function
 import time
 import sys
 import pprint
@@ -69,16 +70,16 @@ def getJsonData(url):
     try:
         r=requests.get(url)
     except Exception as e:
-        print "no connection: ", e
+        print ("no connection: ", e)
         return False
     if r.status_code != 200:
-        print "not answered OK==200, but ", r.status_code
+        print ("not answered OK==200, but ", r.status_code)
         return False
     try:
         j=r.json()
     except Exception as e:
-        print "no json, text:"
-        print r.text
+        print ("no json, text:")
+        print (r.text)
         # raise e
         return False
     return j
@@ -87,21 +88,21 @@ def showPoolData(url):
     """
     gets all json data from pool, but shows only what is in POOL_JSON 
     """
-    print "Pool:"
+    print ("Pool:")
     j=getJsonData(url)
     if not j: 
         return False
     # pprint.pprint (j)
     for Jkey, Jfn in POOL_JSON:
-        print Jfn(j[Jkey]), "(%s)" % Jkey
-    return True
+        print (Jfn(j[Jkey]), "(%s)" % Jkey)
+    return j
     
 def showHasherData(url):
     """
     gets all json data from cloudhasher, but shows only what is in HASHER_JSON
     """
     
-    print "CloudHasher:"
+    print ("CloudHasher:")
     j=getJsonData(url)
     if not j: 
         return False
@@ -112,10 +113,15 @@ def showHasherData(url):
     
     # pprint.pprint (j)
     for Jkey, Jfn in HASHER_JSON:
-        print Jfn(j[Jkey]), "(%s)" % Jkey
+        print (Jfn(j[Jkey]), "(%s)" % Jkey)
         
-    print "%.2f days" % (float(j['btc_avail']) / ( float(j['price'])*float(j['accepted_speed'])) ),
-    print "(remaining btc / order price / hashrate)"
+    estimate = (float(j['btc_avail']) / ( float(j['price'])*float(j['accepted_speed'])) )
+    print ("%.2f days" % estimate, end='')
+    print ("(remaining btc / order price / hashrate)")
+    return j
+
+
+def showCompositeResults(pooldata, hasherdata):
     return True
 
 def loop(sleepseconds):
@@ -124,13 +130,15 @@ def loop(sleepseconds):
     """
     
     while True:
-        print
-        showPoolData(url=POOL_API_URL%POOL_API_USERNAME)
-        print 
-        showHasherData(url=HASHER_ORDERS_API_URL%(HASHER_API_ID, HASHER_API_KEY))
-        print
-        print humanTime(time.time()), 
-        print "... sleep %s seconds ..." % sleepseconds
+        print ()
+        pooldata=showPoolData(url=POOL_API_URL%POOL_API_USERNAME)
+        print ()
+        hasherdata=showHasherData(url=HASHER_ORDERS_API_URL%(HASHER_API_ID, HASHER_API_KEY))
+        print ()
+        showCompositeResults(pooldata, hasherdata)
+        print ()
+        print (humanTime(time.time()), end='') 
+        print ("... sleep %s seconds ..." % sleepseconds)
         time.sleep(sleepseconds)
     
 def checkCredentials():
@@ -139,8 +147,8 @@ def checkCredentials():
     """
     yourCredentials=(POOL_API_USERNAME, HASHER_API_ID, HASHER_API_KEY)
     if "" in yourCredentials: 
-        print "You must fill in credentials.py first."
-        print yourCredentials
+        print ("You must fill in credentials.py first.")
+        print (yourCredentials)
         return False
     else:
         return True
@@ -151,7 +159,7 @@ if __name__ == '__main__':
     try:
         loop(sleepseconds=SLEEP_SECONDS)
     except KeyboardInterrupt:
-        print "Bye."
+        print ("Bye.")
         sys.exit()
     
     
