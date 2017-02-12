@@ -21,6 +21,8 @@ import pprint
 import requests  # pip install requests
 
 SLEEP_SECONDS=5*60
+SHOW_COMPOSITE_RESULTS = True
+
 try:
     from credentials_ME import POOL_API_USERNAME, HASHER_API_ID, HASHER_API_KEY
 except:
@@ -122,7 +124,18 @@ def showHasherData(url):
 
 
 def showCompositeResults(pooldata, hasherdata):
-    return True
+    """
+    Estimates a coin prices by money spent versus money mined.
+    N.B.: In this form probably only be roughly correct 
+    during first buy order? We'll see.
+    """
+    coinsMined = float(pooldata['stats']['paid'])
+    coinsMined += float(pooldata['stats']['balance'])
+    coinsMined /= 1000000000
+    hashingCostsBtc = float(hasherdata['btc_paid'])
+    satoshiPrice = hashingCostsBtc / coinsMined * 100000000
+    print ("%.1f Satoshi/SOIL (mining price approx)" % satoshiPrice)
+    return satoshiPrice
 
 def loop(sleepseconds):
     """
@@ -135,8 +148,9 @@ def loop(sleepseconds):
         print ()
         hasherdata=showHasherData(url=HASHER_ORDERS_API_URL%(HASHER_API_ID, HASHER_API_KEY))
         print ()
-        showCompositeResults(pooldata, hasherdata)
-        print ()
+        if SHOW_COMPOSITE_RESULTS and pooldata and hasherdata:
+            showCompositeResults(pooldata, hasherdata)
+            print ()
         print (humanTime(time.time()), end='') 
         print ("... sleep %s seconds ..." % sleepseconds)
         time.sleep(sleepseconds)
