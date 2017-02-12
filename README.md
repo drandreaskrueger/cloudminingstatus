@@ -5,9 +5,11 @@ reports status of nicehash.com and miners-zone.net (open-ethereum-pool)
 ```bash
 git clone https://github.com/drandreaskrueger/cloudminingstatus.git
 cd cloudminingstatus
-python2 cloudminingstatus.py 
+python cloudminingstatus.py 
 ```
 It will go into an endless loop (prints every 5 minutes), until you press "Ctrl-C" 
+
+![img/screenshot01.png](img/screenshot01.png) 
 
 ### your credentials
 You must fill in your personal credentials, ideally in a copy:
@@ -18,7 +20,7 @@ edit credentials_ME.py
 ```
 
 ### dependencies
-* python 2.7
+* python 2.7 or 3.5
 * python `requests` (install e.g. via `pip`)
 
 ```bash

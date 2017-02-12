@@ -20,7 +20,7 @@ import sys
 import pprint
 import requests  # pip install requests
 
-SLEEP_SECONDS=5*60
+SLEEP_SECONDS= 5*60
 SHOW_COMPOSITE_RESULTS = True
 
 try:
