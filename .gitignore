@@ -1,3 +1,9 @@
+# added by me:
+credentials_ME.py
+.project
+.pydevproject
+*.md.html
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
